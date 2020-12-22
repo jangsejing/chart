@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -64,13 +65,21 @@ class LineChartActivity : AppCompatActivity() {
 
                 setDrawHighlightIndicators(false)
 
+//                // 라인 스타타일
+//                mode = LineDataSet.Mode.HORIZONTAL_BEZIER
             }
 
             val lineData = LineData().apply {
                 addDataSet(lineDataSet)
             }
 
+
             chart.run {
+
+                marker =
+                    LineMarkerView(this@LineChartActivity, R.layout.line_chart_marker_view).apply {
+                        chartView = binding.chart
+                    }
 
                 // 범주
                 legend.isEnabled = false
@@ -125,8 +134,9 @@ class LineChartActivity : AppCompatActivity() {
 
                 setScaleEnabled(false)
                 setPinchZoom(false)
-                data = lineData
+                setTouchEnabled(true)
 
+                data = lineData
 
                 chart.setViewPortOffsets(0f, 0f, 50.dpToPx(this@LineChartActivity).toFloat(), 0f);
                 post {

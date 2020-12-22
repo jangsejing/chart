@@ -19,7 +19,7 @@
 
         <activity android:name=".BarChartActivity" />
         <activity android:name=".line.LineChartActivity" />
-        <activity android:name=".combine.CombineChartActivity" />
+        <activity android:name=".circle.CircleChartActivity" />
     </application>
 
 </manifest>
