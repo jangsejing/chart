@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.jess.chart.circle.CircleChartActivity
 import com.jess.chart.databinding.MainActivityBinding
+import com.jess.chart.line.LineChartActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +22,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        startActivity(Intent(this@MainActivity, CircleChartActivity::class.java))
+        startActivity(Intent(this@MainActivity, LineChartActivity::class.java))
     }
 }

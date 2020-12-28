@@ -24,124 +24,100 @@ class LineChartActivity : AppCompatActivity() {
         binding = LineChartActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.run {
+        val entries = ArrayList<Entry>().apply {
+            add(Entry(-1f, 80f))
+            add(Entry(1f, 100f))
+            add(Entry(2f, 50f))
+            add(Entry(3f, 30f))
+            add(Entry(4f, 200f))
+            add(Entry(5f, 100f).apply {
+                icon = ResourcesCompat.getDrawable(resources, R.drawable.shp_ovel_red_3dp, null)
+            })
+        }
 
-            val entries = ArrayList<Entry>().apply {
-                add(Entry(-1f, 80f))
-                add(Entry(1f, 100f))
-                add(Entry(2f, 50f))
-                add(Entry(3f, 30f))
-                add(Entry(4f, 200f))
-                add(Entry(5f, 100f).apply {
-                    icon = ResourcesCompat.getDrawable(resources, R.drawable.shp_ovel_red_3dp, null)
-                })
-            }
+        val lineDataSet = LineDataSet(entries, null).apply {
+            setDrawValues(false) // 값 표시
+            setDrawIcons(true) // entry icon 표시
+            setDrawCircles(false) // 원 비활성화
+            setDrawFilled(true) // 배경
+            setDrawHighlightIndicators(false)
 
-            val lineDataSet = LineDataSet(entries, null).apply {
-
-                // 값 표시
-                setDrawValues(false)
-
-                // entry icon 표시
-                setDrawIcons(true)
-
-                // 선
-                lineWidth = 2f // 선 굵기
-                color = ContextCompat.getColor(
+            lineWidth = 2f // 선 굵기
+            color = ContextCompat.getColor(
+                this@LineChartActivity,
+                R.color.black
+            )
+            fillDrawable =
+                ContextCompat.getDrawable(
                     this@LineChartActivity,
-                    R.color.black
+                    R.drawable.shp_gradient_red
                 )
+            mode = LineDataSet.Mode.LINEAR
+        }
 
-                // 원
-                setDrawCircles(false) // 원 비활성화
+        val lineData = LineData().apply {
+            addDataSet(lineDataSet)
+        }
 
-                // 배경
-                setDrawFilled(true)
-                fillDrawable =
-                    ContextCompat.getDrawable(
-                        this@LineChartActivity,
-                        R.drawable.shp_gradient_red
-                    )
+        with(binding.chart) {
+            legend.isEnabled = false // 범주
+            description.isEnabled = false // 우측 하단
+            isAutoScaleMinMaxEnabled = true
+            isDoubleTapToZoomEnabled = false
+            isDragEnabled = false
+            setPinchZoom(false)
+            setDrawGridBackground(false)
+            setTouchEnabled(false)
+            setScaleEnabled(false)
 
-                setDrawHighlightIndicators(false)
-
-//                // 라인 스타타일
-//                mode = LineDataSet.Mode.HORIZONTAL_BEZIER
-            }
-
-            val lineData = LineData().apply {
-                addDataSet(lineDataSet)
-            }
-
-
-            chart.run {
-
-                marker =
-                    LineMarkerView(this@LineChartActivity, R.layout.line_chart_marker_view).apply {
-                        chartView = binding.chart
-                    }
-
-                // 범주
-                legend.isEnabled = false
-
-                // 우측 하단
-                description.isEnabled = false
-
-                // x축
-                chart.xAxis.run {
-                    setDrawGridLines(false)
-                    setDrawAxisLine(false)
-                    position = XAxis.XAxisPosition.BOTTOM_INSIDE
-                    granularity = 1f
-                    labelCount = 10
-                    valueFormatter = object : ValueFormatter() {
-                        override fun getFormattedValue(value: Float): String {
-                            return if (value < 0) {
-                                ""
-                            } else {
-                                "%d월".format(value.toInt())
-                            }
-                        }
-                    }
-
-                    // 값 컬러
-                    textColor = ContextCompat.getColor(
-                        this@LineChartActivity,
-                        R.color.purple_200
-                    )
-                    // 사이즈
-                    textSize = 11f
-
-                    extraRightOffset = 0f;
-                    extraLeftOffset = 0f;
-
-                    setPadding(0, 0, 0, 100)
-                }
-
-                // y축 왼쪽 라인, 라벨, 그리드
-                chart.axisLeft.let {
-                    it.setDrawGridLines(false)
-                    it.setDrawLabels(false)
-                    it.setDrawAxisLine(false)
-                }
-
-                // y축 오른쪽 라인, 라벨, 그리드
-                chart.axisRight.let {
-                    it.setDrawGridLines(false)
-                    it.setDrawLabels(false)
-                    it.setDrawAxisLine(false)
-                }
-
+            // x축
+            with(xAxis) {
+                setDrawGridLines(false)
+                setDrawAxisLine(false)
                 setScaleEnabled(false)
                 setPinchZoom(false)
                 setTouchEnabled(true)
+                setPadding(0, 0, 0, 100)
 
-                data = lineData
-
-                chart.setViewPortOffsets(0f, 0f, 50.dpToPx(this@LineChartActivity).toFloat(), 0f);
-                post {
-                    binding.chart.invalidate()
+                position = XAxis.XAxisPosition.BOTTOM_INSIDE
+                granularity = 1f
+                labelCount = 10
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        return if (value < 0) {
+                            ""
+                        } else {
+                            "%d월".format(value.toInt())
+                        }
+                    }
                 }
+                // 값 컬러
+                textColor = ContextCompat.getColor(
+                    this@LineChartActivity,
+                    R.color.purple_200
+                )
+                // 사이즈
+                textSize = 11f
+
+                extraRightOffset = 0f;
+                extraLeftOffset = 0f;
+            }
+
+            // y축 왼쪽 라인, 라벨, 그리드
+            with(axisLeft) {
+                isEnabled = false
+            }
+
+            // y축 오른쪽 라인, 라벨, 그리드
+            with(axisRight) {
+                isEnabled = false
+            }
+
+            data = lineData
+
+            setViewPortOffsets(0f, 0f, 50.dpToPx(this@LineChartActivity).toFloat(), 0f);
+            post {
+                binding.chart.invalidate()
             }
         }
     }
